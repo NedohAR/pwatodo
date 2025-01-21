@@ -1,26 +1,134 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <meta name="description" content="Simple PWA app">
-    <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="manifest" href="manifest.json">
-    <title>Quick Note</title>
+    <title>Note App</title>
+    <style>
+        #connection-status {
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .online {
+            color: green;
+        }
+
+        .offline {
+            color: red;
+        }
+
+        .note {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            padding: 10px;
+        }
+
+        .note-actions {
+            margin-top: 10px;
+        }
+
+        .note-actions .edit-btn,
+        .note-actions .delete-btn {
+            background-color: #008CBA;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 5px;
+        }
+
+        .note-actions .delete-btn {
+            background-color: #f44336;
+        }
+
+        #note-form {
+            margin-bottom: 20px;
+        }
+
+        #note-form input,
+        #note-form button {
+            padding: 10px;
+            margin-right: 10px;
+        }
+
+        #note-form input {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        #note-form button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        /* Стиль для редактирования заметок */
+        .edit-mode {
+            display: none;
+            margin-top: 10px;
+        }
+
+        .edit-mode input {
+            padding: 8px;
+            margin-right: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 200px;
+        }
+
+        .edit-mode button {
+            padding: 8px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .edit-mode button:hover {
+            background-color: #45a049;
+        }
+
+        .edit-mode input:focus,
+        .edit-mode button:focus {
+            outline: none;
+            border-color: #4CAF50;
+        }
+
+        .edit-mode input::placeholder {
+            color: #888;
+        }
+
+        .note-actions .edit-btn:hover,
+        .note-actions .delete-btn:hover {
+            background-color: #005f6b;
+        }
+    </style>
+
 </head>
 <body>
-<header>
-    <h1>QuickNote App</h1>
-    <div id="connection-status" class="online">You are online</div>
-</header>
-<main>
-    <section id="note-section">
-        <h2>My Notes</h2>
-        <div id="note-list"></div>
-        <button id="add-note-button">Add Note</button>
-    </section>
-</main>
+<h1>Note Application</h1>
+
+<div id="connection-status" class="online">
+    Online
+</div>
+
+<div id="note-form">
+    <input type="text" id="note-title" placeholder="Enter title" />
+    <input type="text" id="note-content" placeholder="Enter content" />
+    <button id="add-note-button">Add Note</button>
+</div>
+
+<div id="note-list">
+</div>
+
 <script type="module" src="app.js"></script>
+
 </body>
 </html>

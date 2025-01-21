@@ -93,6 +93,25 @@ h1 {
     transform: scale(1.1);
 }
 
+/* Стили кнопок редактирования и удаления */
+button {
+    background-color: #ff4d4d;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    margin-top: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+button.edit-btn {
+    background-color: #ffbf00;
+}
+
+button:hover {
+    opacity: 0.8;
+}
+
 /* Адаптивность для небольших экранов */
 @media (max-width: 480px) {
     #add-note-button {
@@ -105,4 +124,72 @@ h1 {
     .note {
         font-size: 0.9rem;
     }
+}
+
+/* Стили кнопок редактирования и удаления */
+.note-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+button {
+    background-color: #ff4d4d;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 0.9rem;
+}
+
+button.edit-btn {
+    background-color: #ffbf00;
+}
+
+button:hover {
+    opacity: 0.8;
+}
+
+
+/* Стили для формы редактирования */
+.edit-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.edit-form input,
+.edit-form textarea {
+    padding: 10px;
+    font-size: 1rem;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.edit-form textarea {
+    min-height: 100px;
+}
+
+.edit-form button {
+    padding: 8px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.edit-form .save-btn {
+    background-color: #28a745;
+    color: white;
+}
+
+.edit-form .cancel-btn {
+    background-color: #dc3545;
+    color: white;
+}
+
+.edit-form button:hover {
+    opacity: 0.8;
 }

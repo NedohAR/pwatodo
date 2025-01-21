@@ -2,55 +2,99 @@ let db;
 
 export function openDatabase() {
     return new Promise((resolve, reject) => {
-        const request = indexedDB.open("quicknote-db", 1);
+        const request = indexedDB.open("noteApp", 1);
 
         request.onupgradeneeded = (event) => {
             db = event.target.result;
-
-            const noteStore = db.createObjectStore("notes", { keyPath: "id", autoIncrement: true });
-            noteStore.createIndex("title", "title", { unique: false });
-            noteStore.createIndex("content", "content", { unique: false });
-        }
+            const notesStore = db.createObjectStore("notes", { keyPath: "id", autoIncrement: true });
+            notesStore.createIndex("title", "title", { unique: false });
+        };
 
         request.onsuccess = (event) => {
             db = event.target.result;
-            resolve(db);
-        }
+            resolve();
+        };
 
         request.onerror = (event) => {
-            reject('Error' + event.target.result);
-        }
-    })
+            reject("Database error: " + event.target.errorCode);
+        };
+    });
 }
 
 export function addNote(title, content) {
-    const transaction = db.transaction(["notes"], "readwrite");
-    const noteStore = transaction.objectStore("notes");
+    return new Promise((resolve, reject) => {
+        const transaction = db.transaction("notes", "readwrite");
+        const store = transaction.objectStore("notes");
 
-    const note = {
-        title: title,
-        content: content,
-        created: new Date().toISOString()
-    }
+        const note = {
+            title,
+            content,
+            created: new Date().toISOString(),
+        };
 
-    noteStore.add(note);
+        const request = store.add(note);
+
+        request.onsuccess = () => {
+            resolve();
+        };
+
+        request.onerror = (e) => {
+            reject(e);
+        };
+    });
 }
 
 export function getNotes() {
-    return new Promise((resolve) => {
-        const transaction = db.transaction(["notes"], "readonly");
-        const noteStore = transaction.objectStore("notes");
-        const notes = [];
+    return new Promise((resolve, reject) => {
+        const transaction = db.transaction("notes", "readonly");
+        const store = transaction.objectStore("notes");
 
-        noteStore.openCursor().onsuccess = (event) => {
-            const cursor = event.target.result;
+        const request = store.getAll();
 
-            if (cursor) {
-                notes.push(cursor.value);
-                cursor.continue();
-            } else {
-                resolve(notes);
-            }
-        }
-    })
+        request.onsuccess = () => {
+            resolve(request.result);
+        };
+
+        request.onerror = (e) => {
+            reject(e);
+        };
+    });
+}
+
+export function deleteNote(id) {
+    return new Promise((resolve, reject) => {
+        const transaction = db.transaction("notes", "readwrite");
+        const store = transaction.objectStore("notes");
+
+        const request = store.delete(id);
+
+        request.onsuccess = () => {
+            resolve();
+        };
+
+        request.onerror = (e) => {
+            reject(e);
+        };
+    });
+}
+
+export function updateNote(id, newTitle, newContent) {
+    return new Promise((resolve, reject) => {
+        const transaction = db.transaction("notes", "readwrite");
+        const store = transaction.objectStore("notes");
+
+        const request = store.get(id);
+
+        request.onsuccess = () => {
+            const note = request.result;
+            note.title = newTitle;
+            note.content = newContent;
+            store.put(note);
+            resolve();
+        };
+
+        request.onerror = (e) => {
+            reject(e);
+        };
+    });
 }
