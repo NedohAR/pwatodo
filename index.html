@@ -109,7 +109,42 @@
         .note-actions .delete-btn:hover {
             background-color: #005f6b;
         }
+
+        /* Обновленные стили для размещения камеры и фото справа */
+        .photo-edit-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .photo-edit-container > div {
+            width: 48%;
+        }
+
+        .camera-preview {
+            width: 100%;
+            border-radius: 5px;
+        }
+
+        .captured-photo-preview {
+            width: 100%;
+            border-radius: 5px;
+            display: block;
+        }
+
+        .photo-edit-container h4 {
+            margin: 10px 0;
+        }
+
+        .audio-edit-container {
+            margin-top: 10px;
+        }
+
+        .audio-edit-container h4 {
+            margin-bottom: 5px;
+        }
     </style>
+
 
 </head>
 <body>
@@ -122,8 +157,15 @@
 <div id="note-form">
     <input type="text" id="note-title" placeholder="Enter title" />
     <input type="text" id="note-content" placeholder="Enter content" />
+    <button id="take-photo-button">Take Photo</button>
+    <video id="camera-preview" autoplay playsinline style="display: none;"></video>
+    <canvas id="photo-canvas" style="display: none;"></canvas>
+    <img id="photo-preview" style="display: none; margin-top: 10px;" />
+    <button id="record-audio-button">Record Audio</button>
+    <audio id="audio-preview" controls style="display: none; margin-top: 10px;"></audio>
     <button id="add-note-button">Add Note</button>
 </div>
+
 
 <div id="note-list">
 </div>
