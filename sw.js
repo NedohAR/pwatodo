@@ -4,7 +4,10 @@ const filesToCache = [
     '/app.js',
     '/style.css',
     '/db.js',
+    '/manifest.json',
+    '/sw.js'
 ];
+
 
 self.addEventListener('install', (event) => {
     console.log('Service Worker: Installing...');
