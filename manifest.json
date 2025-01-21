@@ -1,0 +1,9 @@
+{
+  "name": "QuickNote",
+  "short_name": "QuickNote",
+  "description": "Prosta aplikacja PWA do zarządzania notatkami",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#007bff"
+}

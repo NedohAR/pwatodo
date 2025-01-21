@@ -1,0 +1,108 @@
+/* Базовые стили для всего приложения */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f9;
+    color: #333;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+}
+
+header {
+    background-color: #007bff;
+    color: white;
+    width: 100%;
+    padding: 15px 0;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    margin: 0;
+    font-size: 1.8rem;
+}
+
+#note-list {
+    margin: 20px 10px;
+    width: 100%;
+    max-width: 600px;
+    display: grid;
+    gap: 15px;
+}
+
+/* Адаптивная сетка для карточек */
+@media (min-width: 768px) {
+    #note-list {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 1024px) {
+    #note-list {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* Стили карточек заметок */
+.note {
+    background-color: white;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.note:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.note h3 {
+    margin: 0 0 10px;
+    font-size: 1.2rem;
+    color: #007bff;
+}
+
+.note p {
+    margin: 5px 0;
+    font-size: 1rem;
+    line-height: 1.4;
+}
+
+/* Стили кнопки добавления заметок */
+#add-note-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 15px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    font-size: 1.5rem;
+    transition: background-color 0.2s, transform 0.2s;
+}
+
+#add-note-button:hover {
+    background-color: #0056b3;
+    transform: scale(1.1);
+}
+
+/* Адаптивность для небольших экранов */
+@media (max-width: 480px) {
+    #add-note-button {
+        bottom: 15px;
+        right: 15px;
+        padding: 12px;
+        font-size: 1.2rem;
+    }
+
+    .note {
+        font-size: 0.9rem;
+    }
+}
