@@ -3,174 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="manifest.json">
     <title>Note App</title>
     <style>
-        #connection-status {
-            margin-bottom: 20px;
-            font-weight: bold;
-        }
-
-        .online {
-            color: green;
-        }
-
-        .offline {
-            color: red;
-        }
-
-        .note {
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            margin-bottom: 10px;
-            padding: 10px;
-        }
-
-        .note-actions {
-            margin-top: 10px;
-        }
-
-        .note-actions .edit-btn,
-        .note-actions .delete-btn {
-            background-color: #008CBA;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-right: 5px;
-        }
-
-        .note-actions .delete-btn {
-            background-color: #f44336;
-        }
-
-        #note-form {
-            margin-bottom: 20px;
-        }
-
-        #note-form input,
-        #note-form button {
-            padding: 10px;
-            margin-right: 10px;
-        }
-
-        #note-form input {
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-
-        #note-form button {
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        /* Стиль для редактирования заметок */
-        .edit-mode {
+        .screen {
             display: none;
-            margin-top: 10px;
         }
-
-        .edit-mode input {
-            padding: 8px;
-            margin-right: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            width: 200px;
-        }
-
-        .edit-mode button {
-            padding: 8px 15px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        .edit-mode button:hover {
-            background-color: #45a049;
-        }
-
-        .edit-mode input:focus,
-        .edit-mode button:focus {
-            outline: none;
-            border-color: #4CAF50;
-        }
-
-        .edit-mode input::placeholder {
-            color: #888;
-        }
-
-        .note-actions .edit-btn:hover,
-        .note-actions .delete-btn:hover {
-            background-color: #005f6b;
-        }
-
-        /* Обновленные стили для размещения камеры и фото справа */
-        .photo-edit-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .photo-edit-container > div {
-            width: 48%;
-        }
-
-        .camera-preview {
-            width: 100%;
-            border-radius: 5px;
-        }
-
-        .captured-photo-preview {
-            width: 100%;
-            border-radius: 5px;
+        .screen.active {
             display: block;
         }
-
-        .photo-edit-container h4 {
-            margin: 10px 0;
-        }
-
-        .audio-edit-container {
-            margin-top: 10px;
-        }
-
-        .audio-edit-container h4 {
-            margin-bottom: 5px;
-        }
     </style>
-
-
 </head>
 <body>
-<h1>Note Application</h1>
+<div id="screens">
+    <div id="note-list-screen" class="screen active">
+        <h1>Note List</h1>
+        <div id="connection-status" class="online">
+            Online
+        </div>
+        <button onclick="switchScreen('add-note-screen')">Add Note</button>
+        <div id="note-list"></div>
+    </div>
 
-<div id="connection-status" class="online">
-    Online
-</div>
+    <div id="add-note-screen" class="screen">
+        <h1>Add Note</h1>
+        <button onclick="switchScreen('note-list-screen')">Back</button>
+        <div id="note-form">
+            <input type="text" id="note-title" placeholder="Enter title" />
+            <input type="text" id="note-content" placeholder="Enter content" />
+            <button id="take-photo-button">Take Photo</button>
+            <video id="camera-preview" autoplay playsinline style="display: none;"></video>
+            <canvas id="photo-canvas" style="display: none;"></canvas>
+            <img id="photo-preview" style="display: none; margin-top: 10px;"  alt=""/>
+            <button id="record-audio-button">Record Audio</button>
+            <audio id="audio-preview" controls style="display: none; margin-top: 10px;"></audio>
+            <button id="add-note-button">Add Note</button>
+        </div>
+    </div>
 
-<div id="note-form">
-    <input type="text" id="note-title" placeholder="Enter title" />
-    <input type="text" id="note-content" placeholder="Enter content" />
-    <button id="take-photo-button">Take Photo</button>
-    <video id="camera-preview" autoplay playsinline style="display: none;"></video>
-    <canvas id="photo-canvas" style="display: none;"></canvas>
-    <img id="photo-preview" style="display: none; margin-top: 10px;" />
-    <button id="record-audio-button">Record Audio</button>
-    <audio id="audio-preview" controls style="display: none; margin-top: 10px;"></audio>
-    <button id="add-note-button">Add Note</button>
-</div>
-
-
-<div id="note-list">
+    <div id="edit-note-screen" class="screen">
+        <h1>Edit Note</h1>
+        <button onclick="switchScreen('note-list-screen')">Back</button>
+        <div id="edit-note-form">
+            <input type="text" id="edit-title" placeholder="Edit title" />
+            <input type="text" id="edit-content" placeholder="Edit content" />
+            <button id="edit-take-photo-button">Take Photo</button>
+            <video id="edit-camera-preview" autoplay playsinline style="display: none;"></video>
+            <img id="edit-photo-preview" style="display: none; margin-top: 10px;"  alt=""/>
+            <button id="edit-record-audio-button">Record Audio</button>
+            <audio id="edit-audio-preview" controls style="display: none; margin-top: 10px;"></audio>
+            <button id="save-edit-button">Save</button>
+        </div>
+    </div>
 </div>
 
 <script type="module" src="app.js"></script>
-
+<script>
+    function switchScreen(screenId) {
+        document.querySelectorAll('.screen').forEach(screen => {
+            screen.classList.remove('active');
+        });
+        document.getElementById(screenId).classList.add('active');
+    }
+</script>
 </body>
 </html>

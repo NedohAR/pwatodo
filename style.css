@@ -1,196 +1,155 @@
-/* Базовые стили для всего приложения */
 body {
     font-family: Arial, sans-serif;
-    background-color: #f4f4f9;
-    color: #333;
     margin: 0;
     padding: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    height: 100%;
+    color: #333;
+    background-color: #f4f4f9;
+    max-width: 100%;
 }
 
-header {
-    background-color: #007bff;
-    color: white;
-    width: 100%;
-    padding: 15px 0;
-    text-align: center;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-h1 {
-    margin: 0;
+h1, h2 {
     font-size: 1.8rem;
+    margin-bottom: 20px;
+}
+
+input, textarea {
+    width: 100%;
+    max-width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #cccccc;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+button {
+    padding: 10px 15px;
+    font-size: 1rem;
+    margin: 5px 0;
+    border: none;
+    background-color: #007BFF;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+#connection-status {
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 0.9rem;
+    margin-top: 5px;
+}
+
+.online {
+    color: #fff;
+    background-color: #28a745;
+}
+
+.offline {
+    color: #fff;
+    background-color: #dc3545;
+}
+
+.screen {
+    display: none;
+    padding: 20px;
+}
+
+.screen.active {
+    display: block;
 }
 
 #note-list {
-    margin: 20px 10px;
-    width: 100%;
-    max-width: 600px;
-    display: grid;
-    gap: 15px;
+    margin-top: 20px;
 }
 
-/* Адаптивная сетка для карточек */
-@media (min-width: 768px) {
-    #note-list {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
-@media (min-width: 1024px) {
-    #note-list {
-        grid-template-columns: repeat(3, 1fr);
-    }
-}
-
-/* Стили карточек заметок */
 .note {
-    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
     padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.note:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    margin-bottom: 15px;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .note h3 {
     margin: 0 0 10px;
     font-size: 1.2rem;
-    color: #007bff;
 }
 
 .note p {
-    margin: 5px 0;
+    margin: 0;
     font-size: 1rem;
-    line-height: 1.4;
+    color: #555;
 }
 
-/* Стили кнопки добавления заметок */
-#add-note-button {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    padding: 15px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 50%;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    cursor: pointer;
-    font-size: 1.5rem;
-    transition: background-color 0.2s, transform 0.2s;
-}
-
-#add-note-button:hover {
-    background-color: #0056b3;
-    transform: scale(1.1);
-}
-
-/* Стили кнопок редактирования и удаления */
-button {
-    background-color: #ff4d4d;
-    color: white;
-    border: none;
-    padding: 5px 10px;
+.note img,
+.note audio {
     margin-top: 10px;
-    cursor: pointer;
-    border-radius: 5px;
+    max-width: 100%;
+    display: block;
 }
 
-button.edit-btn {
-    background-color: #ffbf00;
+.note-actions {
+    margin-top: 10px;
 }
 
-button:hover {
-    opacity: 0.8;
+.note-actions button {
+    font-size: 0.9rem;
 }
 
-/* Адаптивность для небольших экранов */
-@media (max-width: 480px) {
-    #add-note-button {
-        bottom: 15px;
-        right: 15px;
-        padding: 12px;
-        font-size: 1.2rem;
+@media (max-width: 768px) {
+    h1, h2 {
+        font-size: 1.5rem;
     }
 
-    .note {
+    input, textarea {
+        padding: 8px;
+        font-size: 0.95rem;
+    }
+
+    button {
+        font-size: 0.9rem;
+        padding: 8px 12px;
+    }
+
+    .note h3 {
+        font-size: 1.1rem;
+    }
+
+    .note p {
         font-size: 0.9rem;
     }
 }
 
-/* Стили кнопок редактирования и удаления */
-.note-actions {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 10px;
+@media (max-width: 480px) {
+    body {
+        font-size: 0.9rem;
+    }
+
+    h1, h2 {
+        font-size: 1.3rem;
+    }
+
+    #note-list-screen button,
+    #add-note-screen button {
+        font-size: 0.85rem;
+        padding: 6px 10px;
+    }
+
+    .note {
+        padding: 10px;
+    }
+
+    .note h3 {
+        font-size: 1rem;
+    }
+
+    .note p {
+        font-size: 0.85rem;
+    }
 }
-
-button {
-    background-color: #ff4d4d;
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    cursor: pointer;
-    border-radius: 5px;
-    font-size: 0.9rem;
-}
-
-button.edit-btn {
-    background-color: #ffbf00;
-}
-
-button:hover {
-    opacity: 0.8;
-}
-
-
-/* Стили для формы редактирования */
-.edit-form {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.edit-form input,
-.edit-form textarea {
-    padding: 10px;
-    font-size: 1rem;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    width: 100%;
-    box-sizing: border-box;
-}
-
-.edit-form textarea {
-    min-height: 100px;
-}
-
-.edit-form button {
-    padding: 8px 15px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-.edit-form .save-btn {
-    background-color: #28a745;
-    color: white;
-}
-
-.edit-form .cancel-btn {
-    background-color: #dc3545;
-    color: white;
-}
-
-.edit-form button:hover {
-    opacity: 0.8;
-}
-
