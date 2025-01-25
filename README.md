@@ -30,4 +30,5 @@ HTML,CSS,JavaScript
 
 3) Aby korzystać z aplikacji w trybie offline, należy zarejestrować ją jako PWA.
 
-4. Vercel-https://pwatodo-6urccwz7m-nedohars-projects.vercel.app/
+4. Vercel - https://pwatodo-six.vercel.app/
+   
