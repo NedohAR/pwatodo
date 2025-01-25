@@ -4,12 +4,13 @@ let mediaStream = null;
 
 function displayNotes() {
     const noteList = document.getElementById("note-list");
-    noteList.innerHTML = "";
+    const fragment = document.createDocumentFragment();
 
     getNotes().then((notes) => {
         notes.forEach((note) => {
             const noteItem = document.createElement("div");
             noteItem.className = "note";
+            noteItem.dataset.id = note.id;
 
             noteItem.innerHTML = `
                 <h3>${note.title}</h3>
@@ -23,110 +24,153 @@ function displayNotes() {
                 </div>
             `;
 
-            noteList.appendChild(noteItem);
-
-            noteItem.querySelector(".edit-btn").addEventListener("click", () => {
-                const editNoteForm = document.getElementById("edit-note-form");
-                editNoteForm.innerHTML = `
-                    <input type="text" id="edit-note-title" value="${note.title}" />
-                    <input type="text" id="edit-note-content" value="${note.content}" />
-                    <button id="edit-take-photo-button">Take Photo</button>
-                    <video id="edit-camera-preview" autoplay playsinline style="display: none;"></video>
-                    <canvas id="edit-photo-canvas" style="display: none;"></canvas>
-                    <img id="edit-photo-preview" src="${note.photo || ""}" style="display: ${note.photo ? "block" : "none"}; margin-top: 10px;"  alt=""/>
-                    <button id="edit-record-audio-button">Record Audio</button>
-                    <audio id="edit-audio-preview" controls src="${note.audio || ""}" style="display: ${note.audio ? "block" : "none"}; margin-top: 10px;"></audio>
-                    <button id="save-note-button">Save</button>
-                `;
-
-                let photoData = note.photo || null;
-                let audioBlob = null;
-
-                const editTakePhotoButton = document.getElementById("edit-take-photo-button");
-                const editCameraPreview = document.getElementById("edit-camera-preview");
-                const editPhotoCanvas = document.getElementById("edit-photo-canvas");
-                const editPhotoPreview = document.getElementById("edit-photo-preview");
-
-                const editRecordAudioButton = document.getElementById("edit-record-audio-button");
-                const editAudioPreview = document.getElementById("edit-audio-preview");
-
-                let mediaRecorder;
-
-                editTakePhotoButton.addEventListener("click", async () => {
-                    if (!mediaStream) {
-                        mediaStream = await navigator.mediaDevices.getUserMedia({ video: true });
-                        editCameraPreview.srcObject = mediaStream;
-                        editCameraPreview.style.display = "block";
-                        editTakePhotoButton.textContent = "Capture Photo";
-                    } else {
-                        const context = editPhotoCanvas.getContext("2d");
-                        editPhotoCanvas.width = editCameraPreview.videoWidth;
-                        editPhotoCanvas.height = editCameraPreview.videoHeight;
-                        context.drawImage(editCameraPreview, 0, 0, editPhotoCanvas.width, editPhotoCanvas.height);
-                        photoData = editPhotoCanvas.toDataURL("image/png");
-                        editPhotoPreview.src = photoData;
-                        editPhotoPreview.style.display = "block";
-                        editCameraPreview.style.display = "none";
-                        editTakePhotoButton.textContent = "Take Photo";
-
-                        mediaStream.getTracks().forEach((track) => track.stop());
-                        mediaStream = null;
-                    }
-                });
-
-                editRecordAudioButton.addEventListener("click", () => {
-                    if (!mediaRecorder || mediaRecorder.state === "inactive") {
-                        navigator.mediaDevices.getUserMedia({ audio: true })
-                            .then((stream) => {
-                                mediaRecorder = new MediaRecorder(stream);
-                                mediaRecorder.start();
-                                editRecordAudioButton.textContent = "Stop Recording";
-
-                                const audioChunks = [];
-                                mediaRecorder.addEventListener("dataavailable", (event) => {
-                                    audioChunks.push(event.data);
-                                });
-
-                                mediaRecorder.addEventListener("stop", () => {
-                                    audioBlob = new Blob(audioChunks, { type: "audio/mp3" });
-                                    editAudioPreview.src = URL.createObjectURL(audioBlob);
-                                    editAudioPreview.style.display = "block";
-                                    editRecordAudioButton.textContent = "Record Audio";
-
-                                    stream.getTracks().forEach((track) => track.stop());
-                                });
-                            })
-                            .catch((error) => alert("Error accessing microphone: " + error));
-                    } else {
-                        mediaRecorder.stop();
-                    }
-                });
-
-                document.getElementById("save-note-button").addEventListener("click", () => {
-                    const updatedTitle = document.getElementById("edit-note-title").value.trim();
-                    const updatedContent = document.getElementById("edit-note-content").value.trim();
-
-                    if (updatedTitle && updatedContent) {
-                        updateNote(note.id, updatedTitle, updatedContent, photoData, audioBlob ? URL.createObjectURL(audioBlob) : note.audio).then(() => {
-                            switchScreen("note-list-screen");
-                            displayNotes();
-                        });
-                    } else {
-                        alert("Please fill out both the title and the content.");
-                    }
-                });
-
-                switchScreen("edit-note-screen");
-            });
-
+            noteItem.querySelector(".edit-btn").addEventListener("click", () => editNoteHandler(note));
             noteItem.querySelector(".delete-btn").addEventListener("click", () => {
-                const confirmDelete = confirm("Are you sure you want to delete this note?");
-                if (confirmDelete) {
+                if (confirm("Are you sure you want to delete this note?")) {
                     deleteNote(note.id).then(() => displayNotes());
                 }
             });
+
+            fragment.appendChild(noteItem);
         });
+
+        noteList.innerHTML = "";
+        noteList.appendChild(fragment);
     });
+}
+
+function editNoteHandler(note) {
+    const editNoteForm = document.getElementById("edit-note-form");
+    editNoteForm.innerHTML = editNoteForm.innerHTML = `
+    <div class="edit-note-form">
+        <input 
+            type="text" 
+            id="edit-note-title" 
+            value="${note.title}" 
+            placeholder="Enter title" 
+            class="edit-input" 
+        />
+        <input 
+            type="text" 
+            id="edit-note-content" 
+            value="${note.content}" 
+            placeholder="Enter content" 
+            class="edit-input" 
+        />
+        <div class="photo-section">
+            <button id="edit-take-photo-button" class="action-button">Take Photo</button>
+            <video 
+                id="edit-camera-preview" 
+                autoplay 
+                playsinline 
+                style="display: none;" 
+                class="camera-preview">
+            </video>
+            <canvas 
+                id="edit-photo-canvas" 
+                style="display: none;" 
+                class="photo-canvas">
+            </canvas>
+            <img 
+                id="edit-photo-preview" 
+                src="${note.photo || ""}" 
+                style="display: ${note.photo ? "block" : "none"}; margin-top: 10px;" 
+                class="photo-preview" 
+                alt="Photo Preview" 
+            />
+        </div>
+        <div class="audio-section">
+            <button id="edit-record-audio-button" class="action-button">Record Audio</button>
+            <audio 
+                id="edit-audio-preview" 
+                controls 
+                src="${note.audio || ""}" 
+                style="display: ${note.audio ? "block" : "none"}; margin-top: 10px;" 
+                class="audio-preview">
+            </audio>
+        </div>
+        <button id="save-note-button" class="save-button">Save</button>
+    </div>
+`;
+
+    let photoData = note.photo || null;
+    let audioBlob = null;
+
+    const editTakePhotoButton = document.getElementById("edit-take-photo-button");
+    const editCameraPreview = document.getElementById("edit-camera-preview");
+    const editPhotoCanvas = document.getElementById("edit-photo-canvas");
+    const editPhotoPreview = document.getElementById("edit-photo-preview");
+
+    const editRecordAudioButton = document.getElementById("edit-record-audio-button");
+    const editAudioPreview = document.getElementById("edit-audio-preview");
+
+    let mediaRecorder;
+
+    editTakePhotoButton.addEventListener("click", async () => {
+        if (!mediaStream) {
+            mediaStream = await navigator.mediaDevices.getUserMedia({ video: true });
+            editCameraPreview.srcObject = mediaStream;
+            editCameraPreview.style.display = "block";
+            editTakePhotoButton.textContent = "Capture Photo";
+        } else {
+            const context = editPhotoCanvas.getContext("2d");
+            editPhotoCanvas.width = editCameraPreview.videoWidth;
+            editPhotoCanvas.height = editCameraPreview.videoHeight;
+            context.drawImage(editCameraPreview, 0, 0, editPhotoCanvas.width, editPhotoCanvas.height);
+            photoData = editPhotoCanvas.toDataURL("image/png");
+            editPhotoPreview.src = photoData;
+            editPhotoPreview.style.display = "block";
+            editCameraPreview.style.display = "none";
+            editTakePhotoButton.textContent = "Take Photo";
+
+            mediaStream.getTracks().forEach((track) => track.stop());
+            mediaStream = null;
+        }
+    });
+
+    editRecordAudioButton.addEventListener("click", () => {
+        if (!mediaRecorder || mediaRecorder.state === "inactive") {
+            navigator.mediaDevices.getUserMedia({ audio: true })
+                .then((stream) => {
+                    mediaRecorder = new MediaRecorder(stream);
+                    mediaRecorder.start();
+                    editRecordAudioButton.textContent = "Stop Recording";
+
+                    const audioChunks = [];
+                    mediaRecorder.addEventListener("dataavailable", (event) => {
+                        audioChunks.push(event.data);
+                    });
+
+                    mediaRecorder.addEventListener("stop", () => {
+                        audioBlob = new Blob(audioChunks, { type: "audio/mp3" });
+                        editAudioPreview.src = URL.createObjectURL(audioBlob);
+                        editAudioPreview.style.display = "block";
+                        editRecordAudioButton.textContent = "Record Audio";
+
+                        stream.getTracks().forEach((track) => track.stop());
+                    });
+                })
+                .catch((error) => alert("Error accessing microphone: " + error));
+        } else {
+            mediaRecorder.stop();
+        }
+    });
+
+    document.getElementById("save-note-button").addEventListener("click", () => {
+        const updatedTitle = document.getElementById("edit-note-title").value.trim();
+        const updatedContent = document.getElementById("edit-note-content").value.trim();
+
+        if (updatedTitle && updatedContent) {
+            updateNote(note.id, updatedTitle, updatedContent, photoData, audioBlob ? URL.createObjectURL(audioBlob) : note.audio).then(() => {
+                switchScreen("note-list-screen");
+                displayNotes();
+            });
+        } else {
+            alert("Please fill out both the title and the content.");
+        }
+    });
+
+    switchScreen("edit-note-screen");
 }
 
 document.addEventListener("DOMContentLoaded", () => {
